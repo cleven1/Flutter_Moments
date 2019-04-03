@@ -1,8 +1,19 @@
-# flutter_hybrid
+# 此项目主要是Android及时通讯项目中的朋友圈模块
 
-A new flutter module project.
+1. 为什么选择用fultter实现朋友圈模块呢?
 
-## Getting Started
+2. 使用flutter是什么感受?
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+3. 你认为的flutter未来发展趋势是什么样的?
+
+
+### 先讲第一个问题
+为什么选择flutter,主要是谷歌2018年推出flutter,后来看了flutter发布会视频,当时的感觉是作为一个iOS开发人员真累,老是有很多公司砸我的饭碗,心塞啊~😭,但是没办法,人总要面对现实往前走,所以在过完年这段时间仔细研究了一下flutter,学完总要做点东西,要不然就是纸上谈兵说不定过几天就忘了,写点东西总能加深影响,哪怕后续忘了,回头看看自己的代码也能回忆回忆
+
+###第二个问题
+使用flutter的感受,说实话挺爽的,跟原生比画界面flutter要快很多,而且flutter性能更高,我已经深深的爱上这么技术了,真希望能早点在公司项目中使用,flutter总体使用感受还是特别好的,比Android好十倍,Android开发是真的麻烦,可能是我习惯了iOS开发,但是Android开发给我的感觉不是很好,如果这三种排优先级的话,flutter,iOS,Android,
+
+### 第三个问题
+
+flutter的未来发展趋势,我认为应该是很不错的,就以目前跨平台的技术来看,RN的性能并不能像flutter一样达到120fps,RN虽然是跨平台技术,但是底层还是映射成原生控件,而且RN的适配很麻烦,包体积也比Flutter要大,
+flutter是基于skia,skia是一套轻量级而且很成熟的引擎,flutter抛弃了以往的局限性,直接自己渲染,所以性能要更高,最后希望flutter发展越来越好吧~~
