@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../custom/CLAppbar.dart';
 import '../custom/CLText.dart';
 import 'package:extended_image/extended_image.dart';
 import '../custom/CLFlow.dart';
@@ -8,7 +9,11 @@ import '../Model/CLMomentsModel.dart';
 import 'package:common_utils/common_utils.dart';
 import '../Utils/CLUtil.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import '../custom/CLAppbar.dart';
+import '../Utils/CLPushUtil.dart';
+import 'CLPublishMomentPage.dart';
+import './CLMomentsDetailPage.dart';
+import './CLOptionsPage.dart';
+import './CLPhotoViewBrowser.dart';
 
 class CLMomentsPage extends StatefulWidget {
   final Widget child;
@@ -27,12 +32,12 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
 
   void initState() { 
     super.initState();
-    _getMomentsData();
+    getMomentsData();
   }
 
-  _getMomentsData({bool isLoadMore = false,String lastId}) async {
-    String isload = isLoadMore ? "1" : "0";
-    CLResultModel result = await CLDioUtil().requestGet("http://api.cleven1.com/api/moments/momentsList?isLoadMore=$isload&offset_id=$lastId");
+  getMomentsData({bool isLoadMore = false,String lastId}) async {
+
+    CLResultModel result = await CLDioUtil().requestGet("http://api.cleven1.com/api/moments/momentsList?isPullUp=$isLoadMore&offset_id=$lastId");
     List jsons = result.data['data'];
     List<CLMomentsModel> tempModel = [];
     jsons.forEach((model){
@@ -53,30 +58,33 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: Container(
-        color: Colors.white,
-        child: Stack(
+    return Scaffold(
+      appBar: CLAppBar(
+        title: '朋友圈',
+      ),
+      body: Stack(
         children: <Widget>[
-          _getListViewContainer(),
+          getListViewContainer(),
           Positioned(
             right: 15,
             bottom: 25,
             child: FloatingActionButton(
               child: Icon(Icons.add),
               onPressed: (){
-                  print("发布");
+                  CLPushUtil().pushNavigatiton(context, 
+                    CLPublishMomentPage(title: "发布", pubilshMomentsSuccess: (){
+                      getMomentsData();
+                    },)
+                  );
                 },
               ),
           )
         ],
       ),
-      ),
     );
   }
 
-  _getListViewContainer() {
+  getListViewContainer() {
     
     return CLListViewRefresh(
       listData: mList,
@@ -84,58 +92,60 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
         itemCount: mList.length,
         itemBuilder: (BuildContext context, int index) {
           CLMomentsModel model = mList[index];
-          return model.momentType == 0 ? _getItemTextContainer(model) : _getItemImageContainer(model);
+          return model.momentType == 0 ? getItemTextContainer(model, index) : getItemImageContainer(model, index);
         },
       ),
       onRefresh: (){
-        _getMomentsData();
+        getMomentsData();
       },
       loadMore: (){
-        _getMomentsData(isLoadMore: true,lastId: mList.last.momentId);
+        getMomentsData(isLoadMore: true,lastId: mList.last.momentId);
       },
     );
   }
 
   /// 文本布局
-  _getItemTextContainer(CLMomentsModel model){
+  getItemTextContainer(CLMomentsModel model ,int index){
     
-    return _getItemBaseContainer(
-      model,
-      Column(
+    return getItemBaseContainer(
+      model: model,
+      index: index,
+      subChild: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _getTextContainer(model),
-          model.isShowFullButton ? _getFullContainer(model) : Container(),
+          getTextContainer(model),
+          model.isShowFullButton ? getFullContainer(model) : Container(),
        ],
      )
     );
   }
 
   /// 图片布局
-  _getItemImageContainer(CLMomentsModel model){
-    return _getItemBaseContainer(
-      model,
-      Column(
+  getItemImageContainer(CLMomentsModel model, int index){
+    return getItemBaseContainer(
+      model: model,
+      index: index,
+      subChild: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _getTextContainer(model),
-          model.isShowFullButton ? _getFullContainer(model) : Container(),
+          getTextContainer(model),
+          model.isShowFullButton ? getFullContainer(model) : Container(),
           SizedBox(height: 10,),
           CLFlow(
             count: model.momentPics.length,
-            children: _getImageContaniner(model),
+            children: getImageContaniner(model),
           ),
         ],
-      )
+      ),
     );
   }
 
-  _getTextContainer(CLMomentsModel model) {
+  getTextContainer(CLMomentsModel model) {
     GlobalKey _myKey = new GlobalKey();
     
     CLText text = CLText(
-          key: _myKey,
-          text: model.content.trim(),
+        key: _myKey,
+          text: model.content,
           maxLines: model.isDidFullButton ? 100000 : 6,
           style: setTextStyle(textColor: Colors.pinkAccent),
         );
@@ -144,29 +154,21 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
     return text; 
   }
 
-  _getImageContaniner(CLMomentsModel model) {
+  getImageContaniner(CLMomentsModel model) {
     List<GestureDetector> images = [];
     List<PhotoViewGalleryPageOptions> galleryList = [];
     for (var i = 0; i < model.momentPics.length; i++) {
       String imageUrl = model.momentPics[i];
-      var pageOption = PhotoViewGalleryPageOptions(
-              imageProvider: NetworkImage(imageUrl),
-              heroTag: "tag${i + 1}",
-            );
+      var pageOption = _photoViewGallery(imageUrl, i);
       galleryList.add(pageOption);
       images.add(GestureDetector(
         onTap: (){
           // print("imageUrl == $imageUrl index == $i");
-          Container(
-            color: Colors.red,
-            child: PhotoViewGallery(
-              pageController: PageController(
-                initialPage: i,
-              ),
-              pageOptions: galleryList,
-              backgroundDecoration: BoxDecoration(color: Colors.black87),
-              ),
-            );
+          CLPushUtil().pushNavigatiton(context,CLPhotoViewBrowser(
+            galleryList: galleryList,
+            initialPage: i,
+            loadingChild: ExtendedImage.network(imageUrl,cache: true,fit: BoxFit.cover,),
+            ));
         },
         child: ExtendedImage.network(imageUrl,cache: true,fit: BoxFit.cover,),
       ));
@@ -174,7 +176,14 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
     return images;
   }
 
-  _getFullContainer(CLMomentsModel model){
+  _photoViewGallery(String imageUrl,int i) {
+        return PhotoViewGalleryPageOptions(
+              imageProvider: NetworkImage(imageUrl),
+              heroTag: "tag${i + 1}",
+            );
+  }
+
+  getFullContainer(CLMomentsModel model){
     return Container(
           padding: EdgeInsets.only(top: 10),
           child: GestureDetector(
@@ -188,10 +197,15 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
         );
   }
 
-  _getItemBaseContainer(CLMomentsModel model, Widget subChild){
+  getItemBaseContainer({CLMomentsModel model, Widget subChild, int index}){
     int timeStamp = model.timeStamp == null ? CLUtil.currentTimeMillis() : int.parse(model.timeStamp);    
     String formatTime = TimelineUtil.format(timeStamp,dayFormat: DayFormat.Simple);
-    return Container(
+    return GestureDetector(
+      onTap: (){
+          print("object == $index  content == ${model.content}");
+          CLPushUtil().pushNavigatiton(context, CLMomentsDetailPage(momentModel: model,));
+      },
+      child: Container(
         padding: EdgeInsets.only(left: 15,right: 15,top: 15),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,14 +238,20 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
               ),
             ),
             GestureDetector(
-              onDoubleTap: (){
-                  print("点击");
+              onTap: (){
+                CLOptionPage.showView(
+                  context,
+                  clickItemCallback: (CLOptionType type){
+                    if (type == CLOptionType.delete){
+                      print("删除");
+                  }
+                });
               },
               child: Icon(Icons.more_horiz,),
             )
           ],
         ),
-      );
+      ),
+    );
   }
 }
-

@@ -179,6 +179,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.4.0"
+  photo:
+    dependency: "direct main"
+    description:
+      name: photo
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.3"
+  photo_manager:
+    dependency: transitive
+    description:
+      name: photo_manager
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.3"
   photo_view:
     dependency: "direct main"
     description:
@@ -268,6 +282,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.8"
+  xs_progress_hud:
+    dependency: "direct main"
+    description:
+      name: xs_progress_hud
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   zoomable_image:
     dependency: "direct main"
     description:

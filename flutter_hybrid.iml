@@ -1,17 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="android" name="Android">
+      <configuration />
+    </facet>
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/lib" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/fluttertoast/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/fluttertoast/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/fluttertoast/build" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/fluttertoast/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/fluttertoast/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/fluttertoast/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/image_picker_saver/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/image_picker_saver/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/image_picker_saver/build" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/path_provider/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/path_provider/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/path_provider/build" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/path_provider/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/path_provider/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/path_provider/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/photo_manager/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/photo_manager/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/photo_manager/build" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/photo_manager/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/photo_manager/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/photo_manager/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/xs_progress_hud/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/xs_progress_hud/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/xs_progress_hud/build" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/xs_progress_hud/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/xs_progress_hud/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.ios/Flutter/.symlinks/xs_progress_hud/example/build" />
       <excludeFolder url="file://$MODULE_DIR$/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
-      <excludeFolder url="file://$MODULE_DIR$/packages" />
-      <excludeFolder url="file://$MODULE_DIR$/test/packages" />
     </content>
+    <orderEntry type="jdk" jdkName="Android API 26 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Dart SDK" level="project" />
     <orderEntry type="library" name="Flutter Plugins" level="project" />
