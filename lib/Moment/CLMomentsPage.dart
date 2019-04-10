@@ -153,31 +153,19 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
 
   getImageContaniner(CLMomentsModel model) {
     List<GestureDetector> images = [];
-    List<PhotoViewGalleryPageOptions> galleryList = [];
+    List<String> pics = [];
     for (var i = 0; i < model.momentPics.length; i++) {
       String imageUrl = model.momentPics[i];
-      var pageOption = _photoViewGallery(imageUrl, i);
-      galleryList.add(pageOption);
+      pics.add(imageUrl);
       images.add(GestureDetector(
         onTap: (){
           // print("imageUrl == $imageUrl index == $i");
-          CLPushUtil().pushNavigatiton(context,CLPhotoViewBrowser(
-            galleryList: galleryList,
-            initialPage: i,
-            loadingChild: ExtendedImage.network(imageUrl,cache: true,fit: BoxFit.cover,),
-            ));
+          CLPushUtil().pushNavigatiton(context, CLPhotoViewBrowser(pics: pics, currentIndex: i,));
         },
         child: ExtendedImage.network(imageUrl,cache: true,fit: BoxFit.cover,),
       ));
     }
     return images;
-  }
-
-  _photoViewGallery(String imageUrl,int i) {
-        return PhotoViewGalleryPageOptions(
-              imageProvider: NetworkImage(imageUrl),
-              heroTag: "tag${i + 1}",
-            );
   }
 
   getFullContainer(CLMomentsModel model){
