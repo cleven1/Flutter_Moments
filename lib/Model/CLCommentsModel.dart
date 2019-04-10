@@ -8,10 +8,11 @@ class CLCommentsModel {
 	String replyUserName;
 	String timeStamp;
 	String aliasName;
+  String avatarUrl;
   /// 判断是否有评论数据
   bool isEmptyContent = false;
 
-	CLCommentsModel({this.replyUserInfo, this.momentId, this.content, this.userInfo, this.replyUserName, this.timeStamp, this.aliasName, this.isEmptyContent});
+	CLCommentsModel({this.replyUserInfo, this.momentId, this.content, this.userInfo, this.replyUserName, this.timeStamp, this.aliasName, this.avatarUrl, this.isEmptyContent});
 
 	CLCommentsModel.fromJson(Map<String, dynamic> json) {
 		replyUserInfo = json['reply_user_info'] != null ? new CLUserinfo.fromJson(json['reply_user_info']) : null;
@@ -21,6 +22,7 @@ class CLCommentsModel {
 		replyUserName = json['reply_user_name'];
 		timeStamp = json['time_stamp'];
 		aliasName = json['alias_name'];
+    avatarUrl = json['avatar_url'];
 	}
 
 	Map<String, dynamic> toJson() {
@@ -36,6 +38,7 @@ class CLCommentsModel {
 		data['reply_user_name'] = this.replyUserName;
 		data['time_stamp'] = this.timeStamp;
 		data['alias_name'] = this.aliasName;
+    data['avatar_url'] = this.avatarUrl;
 		return data;
 	}
 }

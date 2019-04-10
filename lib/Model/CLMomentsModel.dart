@@ -8,6 +8,7 @@ class CLMomentsModel {
   String timeStamp;
   int momentType;
   String aliasName;
+  String avatarUrl;
   String momentId;
   int commentCout;
 
@@ -23,6 +24,7 @@ class CLMomentsModel {
       this.timeStamp,
       this.momentType,
       this.aliasName,
+      this.avatarUrl,
       this.momentId,
       this.commentCout});
 
@@ -37,6 +39,7 @@ class CLMomentsModel {
     timeStamp = json['time_stamp'];
     momentType = json['moment_type'];
     aliasName = json['alias_name'];
+    avatarUrl = json['avatar_url'];
     momentId = json['moment_id'];
     commentCout = json['comment_cout'];
   }
@@ -52,6 +55,7 @@ class CLMomentsModel {
     data['time_stamp'] = this.timeStamp;
     data['moment_type'] = this.momentType;
     data['alias_name'] = this.aliasName;
+    data['avatar_url'] = this.avatarUrl;
     data['moment_id'] = this.momentId;
     data['comment_cout'] = this.commentCout;
     return data;

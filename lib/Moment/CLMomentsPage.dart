@@ -37,7 +37,7 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
 
   getMomentsData({bool isLoadMore = false,String lastId}) async {
 
-    CLResultModel result = await CLDioUtil().requestGet("http://api.cleven1.com/api/moments/momentsList?isPullUp=$isLoadMore&offset_id=$lastId");
+    CLResultModel result = await CLDioUtil().requestGet("http://api.cleven1.com/api/moments/momentsList?isLoadMore=${isLoadMore ? 1 : 0}&offset_id=$lastId");
     List jsons = result.data['data'];
     List<CLMomentsModel> tempModel = [];
     jsons.forEach((model){
@@ -59,9 +59,6 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CLAppBar(
-        title: '朋友圈',
-      ),
       body: Stack(
         children: <Widget>[
           getListViewContainer(),
@@ -200,6 +197,7 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
   getItemBaseContainer({CLMomentsModel model, Widget subChild, int index}){
     int timeStamp = model.timeStamp == null ? CLUtil.currentTimeMillis() : int.parse(model.timeStamp);    
     String formatTime = TimelineUtil.format(timeStamp,dayFormat: DayFormat.Simple);
+    String avatarUrl = model.avatarUrl == null ? model.userInfo.avatarUrl : model.avatarUrl;
     return GestureDetector(
       onTap: (){
           print("object == $index  content == ${model.content}");
@@ -211,7 +209,7 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ExtendedImage.network(
-              "${model.userInfo.avatarUrl}",
+              avatarUrl,
               width: 40,
               height: 40,
               shape: BoxShape.circle,

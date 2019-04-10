@@ -310,6 +310,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
    _getBaseContainer(var model, Widget child ,{Widget subChild, Color nameColor, String name}) {
     int timeStamp = model.timeStamp == null ? CLUtil.currentTimeMillis() : int.parse(model.timeStamp);    
     String formatTime = TimelineUtil.format(timeStamp,dayFormat: DayFormat.Simple);
+    String avatarUrl = model.avatarUrl == null ? model.userInfo.avatarUrl : model.avatarUrl;
     return Container(
       padding: EdgeInsets.only(left: 10,right: 10,top: 5),
       child: Column(
@@ -319,7 +320,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           ExtendedImage.network(
-                "${model.userInfo.avatarUrl}",
+                avatarUrl,
                 width: 40,
                 height: 40,
                 shape: BoxShape.circle,
