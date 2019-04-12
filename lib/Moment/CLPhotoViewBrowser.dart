@@ -12,46 +12,49 @@ class CLPhotoViewBrowser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: GestureDetector(
       onTap: (){
         Navigator.pop(context);
       },
       child: ExtendedImageGesturePageView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                var url = pics[index];
-                Widget image = ExtendedImage.network(
-                  url,
-                  fit: BoxFit.contain,
-                  mode: ExtendedImageMode.Gesture,
-                  gestureConfig: GestureConfig(
-                      inPageView: true, initialScale: 1.0,
-                      //you can cache gesture state even though page view page change.
-                      //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
-                      cacheGesture: false
-                  ),
-                );
-                image = Container(
-                  child: image,
-                  padding: EdgeInsets.all(5.0),
-                );
-                if (index == currentIndex) {
-                  return Hero(
-                    tag: url + index.toString(),
-                    child: image,
-                  );
-                } else {
-                  return image;
-                }
-              },
-              itemCount: pics.length,
-              onPageChanged: (int index) {
-                currentIndex = index;
-              },
-              controller: PageController(
-                initialPage: currentIndex,
+          itemBuilder: (BuildContext context, int index) {
+            var url = pics[index];
+            Widget image = ExtendedImage.network(
+              url,
+              fit: BoxFit.contain,
+              mode: ExtendedImageMode.Gesture,
+              gestureConfig: GestureConfig(
+                  inPageView: true, initialScale: 1.0,
+                  //you can cache gesture state even though page view page change.
+                  //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
+                  cacheGesture: false
               ),
-              scrollDirection: Axis.horizontal,
-            ),
+            );
+            image = Container(
+              child: image,
+              padding: EdgeInsets.all(5.0),
+            );
+            if (index == currentIndex) {
+              return Hero(
+                tag: url + index.toString(),
+                child: image,
+              );
+            } else {
+              return image;
+            }
+          },
+          itemCount: pics.length,
+          onPageChanged: (int index) {
+            currentIndex = index;
+          },
+          controller: PageController(
+            initialPage: currentIndex,
+          ),
+          scrollDirection: Axis.horizontal,
+        ),
+      ),
     );
   }
 }
