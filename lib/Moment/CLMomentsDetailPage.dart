@@ -7,7 +7,7 @@ import '../Model/CLMomentsModel.dart';
 import '../Utils/CLUtil.dart';
 import 'package:common_utils/common_utils.dart';
 import '../Utils/CLDioUtil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import '../Model/CLCommentsModel.dart';
 import '../custom/HUD.dart';
 import '../custom/CLFlow.dart';
@@ -33,10 +33,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
   /// 发布评论
   _publishMomentComment() async{
     if (textEditingController.text.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "文本不能为空",
-        gravity: ToastGravity.CENTER
-      );
+      HUD().showMessageHud(context,content: "文本不能为空");
       return;
     }
     Map<String,dynamic> params = {
@@ -51,10 +48,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
     CLResultModel result = await CLDioUtil().requestPost("http://api.cleven1.com/api/moments/addComments",params: params);
     if(result.success){
       HUD().hideHud();
-      Fluttertoast.showToast(
-        msg: "发送成功",
-        gravity: ToastGravity.CENTER
-      );
+      HUD().showMessageHud(context,content: "发送成功");
       _getMomentComentsData();
       setState(() {
         isReply = false;
@@ -64,10 +58,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
       FocusScope.of(context).requestFocus(FocusNode());
     }else{
       HUD().hideHud();
-      Fluttertoast.showToast(
-        msg: "发送失败",
-        gravity: ToastGravity.CENTER
-      );
+      HUD().showMessageHud(context,content: "发送失败");
     }
   }
 
@@ -104,10 +95,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
         });
       }
     }else{
-      Fluttertoast.showToast(
-        msg: "获取失败",
-        gravity: ToastGravity.CENTER
-      );
+      HUD().showMessageHud(context,content: "获取失败");
     }
   }
 

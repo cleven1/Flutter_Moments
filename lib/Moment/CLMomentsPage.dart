@@ -58,25 +58,30 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          getListViewContainer(),
-          Positioned(
-            right: 15,
-            bottom: 25,
-            child: FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: (){
-                  CLPushUtil().pushNavigatiton(context, 
-                    CLPublishMomentPage(title: "发布", pubilshMomentsSuccess: (){
-                      getMomentsData();
-                    },)
-                  );
-                },
-              ),
-          )
-        ],
+    return MaterialApp(
+      title: "吐槽圈",
+      debugShowCheckedModeBanner: false,// 隐藏debug条幅
+      home: Scaffold(
+        appBar: CLAppBar(title: "吐槽圈",),
+        body: Stack(
+          children: <Widget>[
+            getListViewContainer(),
+            Positioned(
+              right: 15,
+              bottom: 25,
+              child: FloatingActionButton(
+                child: Icon(Icons.add),
+                onPressed: (){
+                    CLPushUtil().pushNavigatiton(context, 
+                      CLPublishMomentPage(title: "发布", pubilshMomentsSuccess: (){
+                        getMomentsData();
+                      },)
+                    );
+                  },
+                ),
+            )
+          ],
+        ),
       ),
     );
   }
