@@ -41,7 +41,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
       "user_id": _userId,
       "content": textEditingController.text,
       "moment_id": _momentId,
-      "reply_id": replyId,
+      "reply_user_id": replyId,
     };
     print("object == $params");
 
@@ -274,7 +274,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
       onTap: (){
         FocusScope.of(context).requestFocus(_focusNode);
         setState(() {
-          replyId = commentsModel.momentId;
+          replyId = commentsModel.userInfo.userId;
           isReply = true;
         });
       },
@@ -286,7 +286,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
           style: TextStyle(color: Colors.black),
           children: <TextSpan>[
             TextSpan(
-              text: commentsModel.replyUserInfo == null ? "" : "@${commentsModel.aliasName}:",
+              text: commentsModel.replyUserInfo == null ? "" : "@${commentsModel.replyUserName}:",
               style: TextStyle(color: Colors.red)
             ),
             TextSpan(
@@ -303,7 +303,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
             Divider(height: 1.0,),
           ],
         ),
-      name: commentsModel.replyUserName == null ? "" : commentsModel.replyUserName
+      name: commentsModel.replyUserName == null ? "" : commentsModel.aliasName
        ),
     );
 
