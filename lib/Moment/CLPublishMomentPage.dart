@@ -7,16 +7,17 @@ import '../custom/CLText.dart';
 import '../Utils/CLDioUtil.dart';
 import '../custom/CLPhotoView.dart';
 import '../custom/HUD.dart';
+import 'package:flutter/services.dart';
 
 /// 定义回调类型
 typedef Future<void> PubilshMomentsSuccess();
 
 class CLPublishMomentPage extends StatefulWidget {
   final Widget child;
-  final String title;
+  final String title = "发布";
   final PubilshMomentsSuccess pubilshMomentsSuccess;
 
-  CLPublishMomentPage({Key key, this.child, @required this.title, this.pubilshMomentsSuccess}): super(key: key);
+  CLPublishMomentPage({Key key, this.child, this.pubilshMomentsSuccess}): super(key: key);
 
   _CLPublishMomentPageState createState() => _CLPublishMomentPageState();
 }
@@ -26,16 +27,45 @@ class _CLPublishMomentPageState extends State<CLPublishMomentPage> {
   // List<AssetEntity> imageList = [];
 
   String _content = '';
+  String _userId = '123456';
+
+  EventChannel eventChannel = EventChannel("publishChannel");
+  MethodChannel methodChannel = MethodChannel("publishChannel");
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CLAppBar(
-        title: widget.title,
-        actions: _getRightActions(),
-      ),
+      // appBar: CLAppBar(
+      //   title: widget.title,
+      //   actions: _getRightActions(),
+      // ),
       body: _getPublishContainer(),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _reviceNativeParams();
+
+    /// 监听客户端点击发布按钮
+    methodChannel.setMethodCallHandler((MethodCall call) async {
+      if (call.method == "publish") {
+        _publishMoment();
+      }
+    });
+  }
+
+  /// 获取客户端传递过来的参数
+  _reviceNativeParams() async {
+    try {
+      eventChannel.receiveBroadcastStream().listen((result){
+        print("object == $result");
+        _userId = result["user_id"];
+      });
+    } on PlatformException catch (e) {
+      print("event get data err: '${e.message}'.");
+    }
   }
 
   @override
@@ -54,7 +84,7 @@ class _CLPublishMomentPageState extends State<CLPublishMomentPage> {
     }
     Map<String,dynamic> params = {
       "content": _content,
-      "user_id": "123456",
+      "user_id": _userId,
       "moment_pics": [],
       "moment_type": "0"
     };
@@ -62,8 +92,10 @@ class _CLPublishMomentPageState extends State<CLPublishMomentPage> {
     CLResultModel result = await  CLDioUtil().requestPost("http://api.cleven1.com/api/moments/publishMoments",params: params);
     if(result.success){
       print(result.data);
-      widget.pubilshMomentsSuccess();
-      Navigator.pop(context);
+      // widget.pubilshMomentsSuccess();
+      // Navigator.pop(context);
+      /// 发布成功
+      methodChannel.invokeListMethod("publish_finish");
       HUD().hideHud();
     }else{
       print("发布失败== ${result.data}");

@@ -12,6 +12,7 @@ import 'CLPublishMomentPage.dart';
 import './CLOptionsPage.dart';
 import './CLPhotoViewBrowser.dart';
 import 'package:flutter/services.dart';
+import '../custom/HUD.dart';
 
 class CLMomentsPage extends StatefulWidget {
   final Widget child;
@@ -33,6 +34,12 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
 
   void initState() { 
     super.initState();
+    /// 监听发布完成,更新数据
+    channel.setMethodCallHandler((MethodCall call) async {
+      if (call.method == "updateMomentsData"){
+        getMomentsData();
+      }
+    });
     getMomentsData();
   }
 
@@ -71,12 +78,14 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
               bottom: 25,
               child: FloatingActionButton(
                 child: Icon(Icons.add),
-                onPressed: (){
-                    CLPushUtil().pushNavigatiton(context, 
-                      CLPublishMomentPage(title: "发布", pubilshMomentsSuccess: (){
-                        getMomentsData();
-                      },)
-                    );
+                onPressed: () async{
+                    final String greeting = await channel.invokeMethod("gotoMomentPublish");
+                    print(greeting);
+                    // CLPushUtil().pushNavigatiton(context, 
+                    //   CLPublishMomentPage(pubilshMomentsSuccess: (){
+                    //     getMomentsData();
+                    //   },)
+                    // );
                   },
                 ),
             )
@@ -237,6 +246,8 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
                   clickItemCallback: (CLOptionType type){
                     if (type == CLOptionType.delete){
                       print("删除");
+                      CLOptionPage.hiddenView();
+                      HUD().showMessageHud(context,content: "等待实现");
                   }
                 });
               },
