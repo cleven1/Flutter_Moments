@@ -8,8 +8,6 @@ import '../Utils/CLDioUtil.dart';
 import '../Model/CLCommentsModel.dart';
 import '../custom/HUD.dart';
 import '../custom/CLFlow.dart';
-import '../Utils/CLPushUtil.dart';
-import './CLPhotoViewBrowser.dart';
 import 'package:flutter/services.dart';
 
 
@@ -31,6 +29,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
 
   /// 接受客户端发送过来的数据
   EventChannel eventChannel = EventChannel("detailChannel");
+  MethodChannel methodChannel = MethodChannel("detailMethodChannel");
 
   /// 发布评论
   _publishMomentComment() async{
@@ -174,7 +173,11 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
       images.add(GestureDetector(
         onTap: (){
           // print("imageUrl == $imageUrl index == $i");
-          CLPushUtil().pushNavigatiton(context, CLPhotoViewBrowser(pics: pics, currentIndex: i,));
+          methodChannel.invokeMethod("photoBrowser",{
+            "index": i,
+            "pics": pics
+          });
+          // CLPushUtil().pushNavigatiton(context, CLPhotoViewBrowser(pics: pics, currentIndex: i,));
         },
         child: ExtendedImage.network(imageUrl,cache: true,fit: BoxFit.cover,),
       ));

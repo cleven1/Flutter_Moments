@@ -174,7 +174,12 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
       images.add(GestureDetector(
         onTap: (){
           // print("imageUrl == $imageUrl index == $i");
-          CLPushUtil().pushNavigatiton(context, CLPhotoViewBrowser(pics: pics, currentIndex: i,));
+          print("pics == ${pics.length}");
+          channel.invokeMethod("photoBrowser",{
+            "index": i,
+            "pics": pics
+          });
+          // CLPushUtil().pushNavigatiton(context, CLPhotoViewBrowser(pics: pics, currentIndex: i,));
         },
         child: ExtendedImage.network(imageUrl,cache: true,fit: BoxFit.cover,),
       ));
