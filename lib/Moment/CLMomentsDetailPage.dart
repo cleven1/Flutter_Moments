@@ -2,24 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import '../custom/CLText.dart';
 import '../custom/CLListViewRefresh.dart';
-import '../custom/CLAppbar.dart';
-import '../Model/CLMomentsModel.dart';
 import '../Utils/CLUtil.dart';
 import 'package:common_utils/common_utils.dart';
 import '../Utils/CLDioUtil.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
 import '../Model/CLCommentsModel.dart';
 import '../custom/HUD.dart';
 import '../custom/CLFlow.dart';
 import '../Utils/CLPushUtil.dart';
 import './CLPhotoViewBrowser.dart';
+import 'package:flutter/services.dart';
 
 
 class CLMomentsDetailPage extends StatefulWidget {
   final Widget child;
-  final CLMomentsModel momentModel;
 
-  CLMomentsDetailPage({Key key, this.child ,@required this.momentModel}): super(key: key);
+  CLMomentsDetailPage({Key key, this.child}): super(key: key);
 
   _CLMomentsDetailPageState createState() => _CLMomentsDetailPageState();
 }
@@ -28,7 +25,12 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
 
   bool isReply = false;
   String replyId = "";
-  List<CLCommentsModel> commentList = [];
+  String _momentId = "";
+  String _userId = "123456";
+  CLCommentModel _commentModel;
+
+  /// 接受客户端发送过来的数据
+  EventChannel eventChannel = EventChannel("detailChannel");
 
   /// 发布评论
   _publishMomentComment() async{
@@ -37,9 +39,9 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
       return;
     }
     Map<String,dynamic> params = {
-      "user_id": "123456",
+      "user_id": _userId,
       "content": textEditingController.text,
-      "moment_id": widget.momentModel.momentId,
+      "moment_id": _momentId,
       "reply_id": replyId,
     };
     print("object == $params");
@@ -64,34 +66,27 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
 
   /// 获取评论数据
   _getMomentComentsData({bool isLoadMore = false,String lastCommentId = ""}) async{
-    String url = "http://api.cleven1.com/api/moments/commentsInfo?isLoadMore=${isLoadMore ? "1" : "0"}&offset_id=${lastCommentId}&moment_id=${widget.momentModel.momentId}";
+    String url = "http://api.cleven1.com/api/moments/commentsInfo?isLoadMore=${isLoadMore ? "1" : "0"}&offset_id=$lastCommentId&moment_id=$_momentId";
     print(url);
     CLResultModel result = await CLDioUtil().requestGet(url);
     if(result.success){
-        List<CLCommentsModel> tempArray = [];
         Map data = result.data["data"];
-        List comments = data["comments"];
-        for (var item in comments) {
-          tempArray.add(CLCommentsModel.fromJson(item));
-        }
+        CLCommentModel commentModel = CLCommentModel.fromJson(data);
+        print("data === $data");
+        print("model === ${commentModel.toJson()}");
       if (isLoadMore) {
         /// 把数据更新放到setState中会刷新页面
+        List tempArray = _commentModel.comments;
+        if (commentModel.comments.isEmpty == false || commentModel.comments.length <= 0) {
+          tempArray.addAll(commentModel.comments);
+        }
+        commentModel.comments = tempArray;
         setState(() {
-          commentList.addAll(tempArray);
+          _commentModel = commentModel;
         });
       }else{
-        if (tempArray.isEmpty && commentList.isEmpty) {
-            CLCommentsModel model = CLCommentsModel(
-              aliasName: widget.momentModel.aliasName,
-              content: widget.momentModel.content,
-              timeStamp: widget.momentModel.timeStamp,
-              userInfo: CLUserinfo.fromJson(widget.momentModel.userInfo.toJson()),
-              isEmptyContent: true
-            );
-            tempArray.add(model);
-          }
         setState(() {
-          commentList = tempArray;
+          _commentModel = commentModel;
         });
       }
     }else{
@@ -102,9 +97,24 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
   @override
   void initState() {
     super.initState();
-    _getMomentComentsData();
+    _reviceNativeParams();
   }
 
+  /// 获取客户端传递过来的参数
+  _reviceNativeParams() async {
+    try {
+      eventChannel.receiveBroadcastStream().listen((result){
+        print("object == $result");
+        _momentId = result["moment_id"];
+        _userId = result["user_id"];
+        _getMomentComentsData();
+      });
+    } on PlatformException catch (e) {
+      print("event get data err: '${e.message}'.");
+    }
+  }
+
+  
   @override
   void dispose() {
     FocusScope.of(context).requestFocus(FocusNode());
@@ -113,31 +123,33 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CLAppBar(title: "详情",),
-      body: _getListViewContainer(),
+    return MaterialApp(
+      home: Scaffold(
+        // appBar: CLAppBar(title: "详情",),
+        body: _getListViewContainer(),
+      ),
     );
   }
 
-  _getHeaderContainer(){
+  _getHeaderContainer(CLCommentModel momentModel){
     return _getBaseContainer(
-      widget.momentModel, 
+      momentModel, 
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          CLText(text: widget.momentModel.content, maxLines: widget.momentModel.isDidFullButton ? 10000 : 6, style: TextStyle(color: Colors.pink),),
+          CLText(text: momentModel.content, maxLines: momentModel.isDidFullButton ? 10000 : 6, style: TextStyle(color: Colors.pink),),
           SizedBox(height: 10,),
-          widget.momentModel.isShowFullButton ? GestureDetector(
+          momentModel.isShowFullButton ? GestureDetector(
           onTap: (){
             setState(() {
-              widget.momentModel.isDidFullButton = !widget.momentModel.isDidFullButton;
+              momentModel.isDidFullButton = !momentModel.isDidFullButton;
             });
           },
-          child: CLText(text: widget.momentModel.isDidFullButton ? "收起" : "全文",style: TextStyle(color: Colors.blue),),) : Container(),
+          child: CLText(text: momentModel.isDidFullButton == true ? "收起" : "全文",style: TextStyle(color: Colors.blue),),) : Container(),
           SizedBox(height: 10,),
-          widget.momentModel.momentType == 1 ? CLFlow(
-            count: widget.momentModel.momentPics.length,
-            children: _getImageContaniner(widget.momentModel),
+          momentModel.momentType == "1" ? CLFlow(
+            count: momentModel.momentPics.length,
+            children: _getImageContaniner(momentModel),
           ) : Container()
         ],
       ),
@@ -153,7 +165,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
   }
 
 
-  _getImageContaniner(CLMomentsModel model) {
+  _getImageContaniner(model) {
     List<GestureDetector> images = [];
     List<String> pics = [];
     for (var i = 0; i < model.momentPics.length; i++) {
@@ -171,7 +183,17 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
   }
 
   _getListViewContainer(){
-    CLCommentsModel commentsModel = commentList.isEmpty ? CLCommentsModel() : commentList.first;
+    List listData = [];
+    int count = 0;
+    if (_commentModel == null){
+      listData = [];
+    }else if(_commentModel.comments.isEmpty || _commentModel.comments.length <= 0){
+      count = 1;
+      listData = [1];
+    }else{
+      listData = _commentModel.comments;
+      count = _commentModel.comments.length + 1;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -182,14 +204,14 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
               FocusScope.of(context).requestFocus(FocusNode());
             },
             child: CLListViewRefresh(
-            listData: commentList,
+            listData: listData,
             child: ListView.builder(
-                itemCount: commentsModel.isEmptyContent == true ? 1 : commentList.length + 1,
+                itemCount: count,
                 itemBuilder: (context,index) {
                   if (index == 0) {
-                  return _getHeaderContainer();
+                  return _getHeaderContainer(_commentModel);
                   }
-                  CLCommentsModel commentsModel = commentList[index - 1];
+                  CLCommentsDetailModel commentsModel = _commentModel.comments[index - 1];
                   return _getListViewItemContainer(commentsModel);
                 },
               ),
@@ -197,8 +219,10 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
               _getMomentComentsData();
             },
             loadMore: (){
-              CLCommentsModel commentsModel = commentList.last;
-              _getMomentComentsData(isLoadMore: true,lastCommentId: commentsModel.momentId);
+              if (_commentModel.comments.isEmpty == false || _commentModel.comments.length > 0){
+                CLCommentsDetailModel commentsModel = _commentModel.comments.last;
+                _getMomentComentsData(isLoadMore: true,lastCommentId: commentsModel.momentId); 
+              }
             },
           ),
           ),
@@ -242,7 +266,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
     );
   }
 
-  _getListViewItemContainer(CLCommentsModel commentsModel){
+  _getListViewItemContainer(CLCommentsDetailModel commentsModel){
     return GestureDetector(
       onTap: (){
         FocusScope.of(context).requestFocus(_focusNode);
@@ -276,13 +300,13 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
             Divider(height: 1.0,),
           ],
         ),
-      name: commentsModel.replyUserName
+      name: commentsModel.replyUserName == null ? "" : commentsModel.replyUserName
        ),
     );
 
   }
 
-   _getBaseContainer(var model, Widget child ,{Widget subChild, Color nameColor, String name}) {
+   _getBaseContainer(var model, Widget child ,{Widget subChild, Color nameColor, String name = ""}) {
     int timeStamp = model.timeStamp == null ? CLUtil.currentTimeMillis() : int.parse(model.timeStamp);    
     String formatTime = TimelineUtil.format(timeStamp,dayFormat: DayFormat.Simple);
     String avatarUrl = model.avatarUrl == null ? model.userInfo.avatarUrl : model.avatarUrl;
@@ -307,7 +331,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
             child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              CLText(text: name == null ? model.aliasName : name,style: setTextStyle(textColor: nameColor == null ? Colors.black87 : nameColor),),
+              CLText(text: name.isEmpty ? model.aliasName : name,style: setTextStyle(textColor: nameColor == null ? Colors.black87 : nameColor),),
               CLText(text: formatTime,style: setTextStyle(textColor: Colors.grey,fontSize: 12),),
               SizedBox(height: 5,),
               child,

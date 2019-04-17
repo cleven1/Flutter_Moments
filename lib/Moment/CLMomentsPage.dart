@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../custom/CLAppbar.dart';
 import '../custom/CLText.dart';
 import 'package:extended_image/extended_image.dart';
 import '../custom/CLFlow.dart';
@@ -8,12 +7,11 @@ import '../Utils/CLDioUtil.dart';
 import '../Model/CLMomentsModel.dart';
 import 'package:common_utils/common_utils.dart';
 import '../Utils/CLUtil.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 import '../Utils/CLPushUtil.dart';
 import 'CLPublishMomentPage.dart';
-import './CLMomentsDetailPage.dart';
 import './CLOptionsPage.dart';
 import './CLPhotoViewBrowser.dart';
+import 'package:flutter/services.dart';
 
 class CLMomentsPage extends StatefulWidget {
   final Widget child;
@@ -29,6 +27,9 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
   bool get wantKeepAlive => true;   
 
   List <CLMomentsModel> mList = [];
+
+  /// 传值channel
+  MethodChannel channel = MethodChannel("moment");
 
   void initState() { 
     super.initState();
@@ -59,10 +60,9 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "吐槽圈",
-      debugShowCheckedModeBanner: false,// 隐藏debug条幅
+      color: Colors.white,
       home: Scaffold(
-        appBar: CLAppBar(title: "吐槽圈",),
+        backgroundColor: Colors.white,
         body: Stack(
           children: <Widget>[
             getListViewContainer(),
@@ -192,9 +192,11 @@ class _CLMomentsPageState extends State<CLMomentsPage> with AutomaticKeepAliveCl
     String formatTime = TimelineUtil.format(timeStamp,dayFormat: DayFormat.Simple);
     String avatarUrl = model.avatarUrl == null ? model.userInfo.avatarUrl : model.avatarUrl;
     return GestureDetector(
-      onTap: (){
+      onTap: () async{
           print("object == $index  content == ${model.content}");
-          CLPushUtil().pushNavigatiton(context, CLMomentsDetailPage(momentModel: model,));
+          final String greeting = await channel.invokeMethod("gotoDetailPage",model.momentId);
+          print(greeting);
+          // CLPushUtil().pushNavigatiton(context, CLMomentsDetailPage(momentModel: model,));
       },
       child: Container(
         padding: EdgeInsets.only(left: 15,right: 15,top: 15),

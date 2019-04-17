@@ -1,6 +1,62 @@
 
 
-class CLCommentsModel {
+class CLCommentModel {
+	String momentType;
+	String momentId;
+	List<CLCommentsDetailModel> comments;
+	String content;
+	CLUserinfo userInfo;
+	List<String> momentPics;
+	String timeStamp;
+  String avatarUrl = "";
+  String aliasName = "";
+  
+  bool isDidFullButton = false;
+  bool isShowFullButton = false;
+
+	CLCommentModel({this.momentType, this.avatarUrl, this.momentId, this.comments, this.content, this.userInfo, this.momentPics, this.timeStamp});
+
+	CLCommentModel.fromJson(Map<String, dynamic> json) {
+		momentType = json['moment_type'];
+		momentId = json['moment_id'];
+		if (json['comments'] != null) {
+			comments = new List<CLCommentsDetailModel>();
+			json['comments'].forEach((v) { comments.add(new CLCommentsDetailModel.fromJson(v)); });
+		}
+		content = json['content'];
+    isShowFullButton = content.length > 100;
+		userInfo = json['user_info'] != null ? new CLUserinfo.fromJson(json['user_info']) : null;
+		if (json['moment_pics'] != null) {
+			momentPics = new List<String>();
+			json['moment_pics'].forEach((v) { momentPics.add(v); });
+		}
+		timeStamp = json['time_stamp'];
+    avatarUrl = json['avatar_url'];
+    aliasName = json['alias_name'];
+	}
+
+	Map<String, dynamic> toJson() {
+		final Map<String, dynamic> data = new Map<String, dynamic>();
+		data['moment_type'] = this.momentType;
+		data['moment_id'] = this.momentId;
+		if (this.comments != null) {
+      data['comments'] = this.comments.map((v) => v.toJson()).toList();
+    }
+		data['content'] = this.content;
+		if (this.userInfo != null) {
+      data['user_info'] = this.userInfo.toJson();
+    }
+		if (this.momentPics != null) {
+      // data['moment_pics'] = this.momentPics.map((v) => v.toJson()).toList();
+    }
+		data['time_stamp'] = this.timeStamp;
+    data["avatar_url"] = this.avatarUrl;
+    data["alias_name"] = this.aliasName;
+		return data;
+	}
+}
+
+class CLCommentsDetailModel {
 	CLUserinfo replyUserInfo;
 	String momentId;
 	String content;
@@ -12,9 +68,9 @@ class CLCommentsModel {
   /// 判断是否有评论数据
   bool isEmptyContent = false;
 
-	CLCommentsModel({this.replyUserInfo, this.momentId, this.content, this.userInfo, this.replyUserName, this.timeStamp, this.aliasName, this.avatarUrl, this.isEmptyContent});
+	CLCommentsDetailModel({this.replyUserInfo, this.momentId, this.content, this.userInfo, this.replyUserName, this.timeStamp, this.aliasName, this.avatarUrl, this.isEmptyContent});
 
-	CLCommentsModel.fromJson(Map<String, dynamic> json) {
+	CLCommentsDetailModel.fromJson(Map<String, dynamic> json) {
 		replyUserInfo = json['reply_user_info'] != null ? new CLUserinfo.fromJson(json['reply_user_info']) : null;
 		momentId = json['moment_id'];
 		content = json['content'];
