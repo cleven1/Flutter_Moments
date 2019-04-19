@@ -32,13 +32,11 @@ class _CLPublishMomentPageState extends State<CLPublishMomentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      color: Colors.white,
-      home: Scaffold(
+    return Scaffold(
+        resizeToAvoidBottomPadding: false,
         backgroundColor: Colors.white,
         body: _getPublishContainer(),
-      ),
-    );
+      );
   }
 
   @override
@@ -131,6 +129,7 @@ class _CLPublishMomentPageState extends State<CLPublishMomentPage> {
 
   _getPublishContainer() {
     return Container(
+      color: Colors.white,
       padding: EdgeInsets.only(left: 10,right: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

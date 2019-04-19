@@ -122,14 +122,10 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      color: Colors.white,
-      home: Scaffold(
-        // appBar: CLAppBar(title: "详情",),
+    return Scaffold(
         backgroundColor: Colors.white,
         body: _getListViewContainer(),
-      ),
-    );
+      );
   }
 
   _getHeaderContainer(CLCommentModel momentModel){
@@ -316,6 +312,7 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
     String formatTime = TimelineUtil.format(timeStamp,dayFormat: DayFormat.Simple);
     String avatarUrl = model.avatarUrl == null ? model.userInfo.avatarUrl : model.avatarUrl;
     return Container(
+      color: Colors.white,
       padding: EdgeInsets.only(left: 10,right: 10,top: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
