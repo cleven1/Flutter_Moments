@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import '../custom/CLAppbar.dart';
 import '../custom/CLText.dart';
 // import 'package:photo/photo.dart';
 // import 'package:photo_manager/photo_manager.dart';
 import '../Utils/CLDioUtil.dart';
-import '../custom/CLPhotoView.dart';
 import '../custom/HUD.dart';
 import 'package:flutter/services.dart';
 
@@ -34,12 +32,12 @@ class _CLPublishMomentPageState extends State<CLPublishMomentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: CLAppBar(
-      //   title: widget.title,
-      //   actions: _getRightActions(),
-      // ),
-      body: _getPublishContainer(),
+    return MaterialApp(
+      color: Colors.white,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: _getPublishContainer(),
+      ),
     );
   }
 

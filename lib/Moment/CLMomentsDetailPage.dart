@@ -123,8 +123,10 @@ class _CLMomentsDetailPageState extends State<CLMomentsDetailPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      color: Colors.white,
       home: Scaffold(
         // appBar: CLAppBar(title: "详情",),
+        backgroundColor: Colors.white,
         body: _getListViewContainer(),
       ),
     );
